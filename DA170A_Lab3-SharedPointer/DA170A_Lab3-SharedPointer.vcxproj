@@ -146,6 +146,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="SharedPtr.h" />
+    <ClInclude Include="VG.h" />
+    <ClInclude Include="WeakPtr.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="SharedPtr.cpp" />
+    <ClCompile Include="WeakPtr.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
