@@ -58,7 +58,7 @@ public:
 		Remove();
 	}
 
-	WeakPtr& operator=(const SharedPtr<T> rhs)
+	WeakPtr& operator=(const SharedPtr<T> &rhs)
 	{
 		Remove();
 		ptr = rhs.ptr;
@@ -70,7 +70,7 @@ public:
 		return *this;
 	}
 
-	WeakPtr& operator=(const WeakPtr& rhs)
+	WeakPtr& operator=(const WeakPtr &rhs)
 	{
 		if (this != &rhs)
 		{

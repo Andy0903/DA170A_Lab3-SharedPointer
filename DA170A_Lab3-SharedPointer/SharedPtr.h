@@ -55,9 +55,13 @@ public:
 		sp.rc = nullptr;
 	}
 
-	SharedPtr(const WeakPtr<T> &wp) : ptr(wp.ptr), rc(wp.rc) {
+	SharedPtr(const WeakPtr<T> &wp) : ptr(wp.ptr), rc(wp.rc) 
+	{
+		//throw std::invalid_argument("Bad argument");
 		if (rc != nullptr)
+		{
 			rc->IncrementShared();
+		}
 	}
 
 	~SharedPtr()
