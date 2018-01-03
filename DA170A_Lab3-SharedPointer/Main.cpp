@@ -95,12 +95,12 @@ void TestVG() {
     //	o	En WeakPtr	VG	VG
 
     WeakPtr<C> wp11;
-    assert(wp11.expired());
+    assert(wp11.Expired());
     SharedPtr<C> sp12(new C(12));
     WeakPtr<C> wp13(wp11);
-    assert(wp13.expired());
+    assert(wp13.Expired());
     WeakPtr<C> wp14(sp12);
-    assert(!wp14.expired());
+    assert(!wp14.Expired());
 
     SharedPtr<C> sp17(wp14);
     assert(sp17);
@@ -112,17 +112,17 @@ void TestVG() {
     //	o	En WeakPtr			VG
     WeakPtr<C> wp15;
     wp14 = wp11;
-    assert(wp14.expired());
+    assert(wp14.Expired());
 
     SharedPtr<C> sp33(new C(33));
     wp14 = sp33;
-    assert(!wp14.expired());
+    assert(!wp14.Expired());
     wp14 = wp14;
-    assert(!wp14.expired());
+    assert(!wp14.Expired());
 
-    sp33.reset();
+    sp33.Reset();
     assert(!sp33);
-    assert(wp14.expired());
+    assert(wp14.Expired());
 
     //Shared(weak)
     try {
@@ -134,12 +134,12 @@ void TestVG() {
 
 	//-	funktioner:		
 	//	o	lock()		VG
-	auto sp51 = wp11.lock();
+	auto sp51 = wp11.Lock();
 	assert(!sp51);
 
 	SharedPtr<C>  sp55(new C(55));
 	wp14 = sp55;
-	sp51 = wp14.lock();
+	sp51 = wp14.Lock();
 	assert(sp51);
 	////	o	expired()		VG	Redan testat
 

@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ReferenceCounter.h" />
     <ClInclude Include="SharedPtr.h" />
     <ClInclude Include="VG.h" />
     <ClInclude Include="WeakPtr.h" />

@@ -1,118 +1,102 @@
 #pragma once
+#include <stdexcept>
+#include "ReferenceCounter.h"
+#include "WeakPtr.h"
 
 template<typename T>
 class SharedPtr
 {
-	class ReferenceCounter
-	{
-	private:
-		int count;
+	friend class WeakPtr<T>;
 
-	public:
-		ReferenceCounter() : count(0)
-		{
-		}
-
-		void Increment()
-		{
-			++count;
-		}
-
-		int Decrement()
-		{
-			return --count;
-		}
-
-		int GetCount() const
-		{
-			return count;
-		}
-	};
-
-public:
-	T *data;
+	T *ptr;
 	ReferenceCounter *rc;
 
-	SharedPtr() : data(nullptr), rc(nullptr)
+	void Remove()
+	{
+		if (rc != nullptr && rc->DecrementShared() == 0)
+		{
+			delete ptr;
+			if (rc->GetWeak() == 0)
+			{
+				delete rc;
+			}
+		}
+	}
+
+public:
+
+	SharedPtr() : ptr(nullptr), rc(nullptr)
 	{
 		rc = new ReferenceCounter();
-		rc->Increment();
+		rc->IncrementShared();
 	}
 
 	SharedPtr(nullptr_t nptr) : SharedPtr()
 	{
 	}
 
-	SharedPtr(T *ptr) : data(ptr), rc(nullptr)
+	SharedPtr(T *ptr) : ptr(ptr), rc(nullptr)
 	{
 		rc = new ReferenceCounter();
-		rc->Increment();
+		rc->IncrementShared();
 	}
 
-	SharedPtr(const SharedPtr<T>& sp) : data(sp.data), rc(sp.rc)
+	SharedPtr(const SharedPtr<T>& sp) : ptr(sp.ptr), rc(sp.rc)
 	{
-		rc->Increment();
+		rc->IncrementShared();
 	}
 
-	SharedPtr(SharedPtr<T>&& sp) : data(nullptr), rc(nullptr)
+	SharedPtr(SharedPtr<T>&& sp) : ptr(nullptr), rc(nullptr)
 	{
-		data = sp.data;
+		ptr = sp.ptr;
 		rc = sp.rc;
 
-		sp.data = nullptr;
+		sp.ptr = nullptr;
 		sp.rc = nullptr;
+	}
+
+	SharedPtr(const WeakPtr<T> &wp) : ptr(wp.ptr), rc(wp.rc) {
+		if (rc != nullptr)
+			rc->IncrementShared();
 	}
 
 	~SharedPtr()
 	{
-		if (rc != nullptr && rc->Decrement() == 0)		//TODO varför nullcheck? out of scope crash i G. Något fel på reset?
-		{
-			delete data;
-			delete rc;
-		}
+		Remove();
 	}
 
 	bool Unique() const
 	{
-		return !(rc->GetCount() > 1);
+		return rc != nullptr && rc->GetShared() <= 1;
 	}
 
 	void Reset(T* ptr)
 	{
-		if (rc->Decrement == 0)
-		{
-			delete data;
-		}
-
-		data = ptr;
-		rc->Increment();
+		Remove();
+		ptr = ptr;
+		rc->IncrementShared();
 	}
 
 	void Reset()
 	{
-		if (rc->Decrement() == 0)
-		{
-			delete data;
-			delete rc;
-
-		}
-
-		data = nullptr;
+		Remove();
+		ptr = nullptr;
+		rc = nullptr;
 	}
 
 	SharedPtr<T>& operator=(const SharedPtr<T>& sp)
 	{
 		if (this != &sp)
 		{
-			if (rc->Decrement() == 0)
+			if (rc != nullptr && rc->DecrementShared() == 0)
 			{
-				delete data;
+				delete ptr;
 				delete rc;
 			}
 
-			data = sp.data;
+			ptr = sp.ptr;
 			rc = sp.rc;
-			rc->Increment();
+			rc->IncrementShared();
 		}
 
 		return *this;
@@ -122,15 +106,15 @@ public:
 	{
 		if (this != &sp)
 		{
-			if (rc->Decrement() == 0)
+			if (rc != nullptr && rc->DecrementShared() == 0)
 			{
-				delete data;
+				delete ptr;
 				delete rc;
 			}
 
-			data = sp.data;
+			ptr = sp.ptr;
 			rc = sp.rc;
-			rc->Increment();
+			rc->IncrementShared();
 		}
 
 		return *this;
@@ -138,32 +122,32 @@ public:
 
 	operator bool() const
 	{
-		return data != nullptr;
+		return ptr != nullptr;
 	}
 
 	T& operator*() const
 	{
-		return *data;
+		return *ptr;
 	}
 
 	T* operator->() const
 	{
-		return data;
+		return ptr;
 	}
 
 	bool operator==(const SharedPtr<T>& rhs) const
 	{
-		return data == rhs.data;
+		return ptr == rhs.ptr;
 	}
 
 	bool operator<(const SharedPtr<T>& rhs) const
 	{
-		return data < rhs.data;
+		return ptr < rhs.ptr;
 	}
 
 	T* Get() const
 	{
-		return data;
+		return ptr;
 	}
 };
 
