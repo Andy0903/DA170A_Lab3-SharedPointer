@@ -42,10 +42,10 @@ void TestG() {
 	SharedPtr<C> sp13(sp11);
 	assert(!sp13);
 
-	assert(sp12.unique());
+	assert(sp12.Unique());
 	SharedPtr<C> sp14(sp12);
 	assert(sp14);
-	assert(!sp12.unique());
+	assert(!sp12.Unique());
 
 
 	//-	Destruktor	G
@@ -72,16 +72,16 @@ void TestG() {
 
 	SharedPtr<C> sp41(new C(41));
 	SharedPtr<C> sp42(new C(42));
-	assert((sp41->value) == (sp41.get()->value));
-	assert((sp41->value) != (sp42.get()->value));
-	assert(&(*sp41) == (sp41.get()));
+	assert((sp41->value) == (sp41.Get()->value));
+	assert((sp41->value) != (sp42.Get()->value));
+	assert(&(*sp41) == (sp41.Get()));
 
     //move
     SharedPtr<C> sp51(std::move(sp41));
     assert(sp51->value == 41);
     assert(!sp41);
 
-	sp51.reset();
+	sp51.Reset();
 	assert(!sp51);
 }
 
